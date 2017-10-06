@@ -1,36 +1,83 @@
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update});
 
-var GameState = {
-  preload: function() {
-    game.load.image('background', 'assets/images/test-bg.png');
-    // this.load.image('adam', 'assets/images/adam-test.png');
-    game.load.spritesheet('adam-sprite-walk', 'assets/images/adam-walk-sprite-sheet.png', 100, 100, 48)
-  },
-  create: function() {
-    this.background = this.game.add.sprite(0, 0, 'background');
-
-    // this.adam = this.game.add.sprite(this.game.world.centerX, this.game.world.CenterY, 'adam');
-    // this.adam.anchor.setTo(0.5, -0.3)
-    // adam = this.adamsprite=game.add.sprite(500, 235, "adam-sprite");
-    adam = game.add.sprite(game.world.centerX, game.world.centerY, "adam-sprite-walk");
-    adam.anchor.setTo(0.5, -0.1);
-    adam.scale.setTo(1, 1)
-    adam.animations.add('walk');
-    adam.play("walk", 24, true);
-  },
-  update: function() {
-    if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-      adam.x -= 4;
-    } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-      adam.x += 4;
-    }
-
-    if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-      adam.y -= 4;
-    }
-  }
+function preload() {
+  game.load.image('sky', 'assets/images/sky.png');
+  game.load.image('ground', 'assets/images/platform.png')
+  game.load.image('star', 'assets/images/star.png')
+  game.load.spritesheet('adam', 'assets/images/adam-walk-sprite-sheet.png', 100, 100, 48)
 };
 
-var game = new Phaser.Game(1080, 432, Phaser.AUTO);
+var player;
+var platforms;
+var cursors;
 
-game.state.add('GameState', GameState);
-game.state.start('GameState');
+var stars;
+var score = 0;
+var scoreText;
+
+function create() {
+  game.add.sprite(0, 0, 'sky');
+
+  platforms = game.add.group();
+
+  platforms.enableBody = true;
+
+  var ground = platforms.create(0, game.world.height - 64, 'ground');
+
+  ground.scale.setTo(2, 2);
+
+  ground.body.immovable = true;
+
+  var ledge = platforms.create(400, 400, 'ground');
+
+  ledge.body.immovable = true;
+
+  ledge = platforms.create(-150, 250, 'ground');
+
+  ledge.body.immovable = true;
+
+  player = game.add.sprite(32, game.world.height - 180, 'adam');
+
+  game.physics.arcade.enable(player);
+
+  player.body.bounce.y = 0.2;
+  player.body.gravity.y = 300;
+  player.body.collideWorldsBounds = true;
+
+  player.animations.add('walk', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48], 24, true);
+
+  cursors = game.input.keyboard.createCursorKeys();
+
+  // adam = game.add.sprite(game.world.centerX, game.world.centerY, "adam-sprite-walk");
+  // adam.anchor.setTo(0.5, -0.1);
+  // adam.scale.setTo(1, 1)
+  // adam.animations.add('walk');
+  // adam.play("walk", 24, true);
+};
+
+function update() {
+  var hitPlatform = game.physics.arcade.collide(player, platforms)
+
+  player.body.velocity.x = 0;
+
+  if (cursors.right.isDown) {
+    player.scale.setTo(1, 1)
+    player.body.velocity.x = 150;
+
+    player.animations.play('walk');
+  }
+  else if (cursors.left.isDown) {
+    player.scale.setTo(-1, 1);
+    player.body.velocity.x = -150;
+
+    player.animations.play('walk');
+  }
+
+  else {
+    player.animations.stop();
+
+    player.frame = 1;
+  }
+
+};
+
