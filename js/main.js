@@ -46,6 +46,20 @@ function create() {
 
   player.animations.add('walk', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48], 24, true);
 
+  stars = game.add.group();
+
+  stars.enableBody = true;
+
+  for (var i = 0; i < 12; i++) {
+    var star = stars.create(i * 70, 0, 'star');
+
+    star.body.gravity.y = 6;
+
+    star.body.bounce.y = 0.7 + Math.random() * 0.2;
+  }
+
+  scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+
   cursors = game.input.keyboard.createCursorKeys();
 
   // adam = game.add.sprite(game.world.centerX, game.world.centerY, "adam-sprite-walk");
@@ -56,7 +70,11 @@ function create() {
 };
 
 function update() {
-  var hitPlatform = game.physics.arcade.collide(player, platforms)
+  var hitPlatform = game.physics.arcade.collide(player, platforms);
+
+  game.physics.arcade.collide(stars, platforms);
+
+  game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
   player.body.velocity.x = 0;
 
@@ -77,7 +95,18 @@ function update() {
     player.animations.stop();
 
     player.frame = 1;
+  };
+
+  if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
+    player.body.velocity.y = -350;
   }
 
 };
+
+function collectStar(player, star) {
+  star.kill();
+
+  score += 10;
+  scoreText.text = 'Score: ' + score;
+}
 
