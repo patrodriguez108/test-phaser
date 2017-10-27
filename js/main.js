@@ -4,7 +4,7 @@ function preload() {
   game.load.image('sky', 'assets/images/sky.png');
   game.load.image('ground', 'assets/images/platform.png');
   game.load.image('star', 'assets/images/star.png');
-  game.load.spritesheet('adam', 'assets/images/adam-sprite-sheet.png', 100, 100, 72);
+  game.load.spritesheet('adam', 'assets/images/adam-sprite-sheet-02.png', 100, 100, 120);
 }
 
 var player;
@@ -38,6 +38,7 @@ function create() {
 
   player = game.add.sprite(32, game.world.height - 180, 'adam');
 
+
   game.physics.arcade.enable(player);
 
   player.body.bounce.y = 0.1;
@@ -47,6 +48,8 @@ function create() {
   player.animations.add('idle', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 47], 24, true);
 
   player.animations.add('walk', [48, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72], 24, true);
+
+  player.animations.add('jump', [83, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119], 24, true);
 
   stars = game.add.group();
 
@@ -76,7 +79,11 @@ function update() {
 
   player.body.velocity.x = 0;
 
-  if (cursors.right.isDown) {
+  if (cursors.up.isDown) {
+    player.animations.play('jump');
+  }
+
+  else if (cursors.right.isDown) {
     player.scale.setTo(1, 1);
     player.body.velocity.x = 90;
 
@@ -89,12 +96,14 @@ function update() {
     player.animations.play('walk');
   }
 
+
   else {
     player.animations.play('idle');
   }
 
   if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
     player.body.velocity.y = -450;
+    player.animations.play('jump');
   }
 
 }
