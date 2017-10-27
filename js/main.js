@@ -4,21 +4,26 @@ function preload() {
   game.load.image('sky', 'assets/images/sky.png');
   game.load.image('ground', 'assets/images/platform.png');
   game.load.image('star', 'assets/images/star.png');
+  // game.load.image('goomba', 'assets/images/goomba.gif')
   game.load.spritesheet('adam', 'assets/images/adam-sprite-sheet-02.png', 100, 100, 120);
 }
 
 var player;
 var platforms;
 var cursors;
+var enemies;
 
 var stars;
 var score = 0;
 var scoreText;
 
 function create() {
-  game.add.sprite(0, 0, 'sky');
+  // game.add.sprite(0, 0, 'sky');
+  game.stage.backgroundColor = "#D9550E"
 
   platforms = game.add.group();
+
+  enemies = game.add.group();
 
   platforms.enableBody = true;
 
@@ -32,12 +37,17 @@ function create() {
 
   ledge.body.immovable = true;
 
-  ledge = platforms.create(-150, 250, 'ground');
+  ledge = platforms.create(-110, 320, 'ground');
+
+  ledge.body.immovable = true;
+
+  ledge = platforms.create(400, 160, 'ground');
 
   ledge.body.immovable = true;
 
   player = game.add.sprite(32, game.world.height - 180, 'adam');
 
+  // var enemy = game.add.sprite(40, 40, 'goomba')
 
   game.physics.arcade.enable(player);
 
@@ -49,7 +59,7 @@ function create() {
 
   player.animations.add('walk', [48, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72], 24, true);
 
-  player.animations.add('jump', [83, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119], 24, true);
+  player.animations.add('jump', [86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100], 24, true);
 
   stars = game.add.group();
 
@@ -79,11 +89,8 @@ function update() {
 
   player.body.velocity.x = 0;
 
-  if (cursors.up.isDown) {
-    player.animations.play('jump');
-  }
 
-  else if (cursors.right.isDown) {
+  if (cursors.right.isDown) {
     player.scale.setTo(1, 1);
     player.body.velocity.x = 90;
 
@@ -96,20 +103,24 @@ function update() {
     player.animations.play('walk');
   }
 
+  else if (cursors.up.isDown) {
+    player.animations.play('jump');
+  }
 
   else {
     player.animations.play('idle');
   }
 
   if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
-    player.body.velocity.y = -450;
-    player.animations.play('jump');
+    player.body.velocity.y = -490;
   }
 
 }
 
 function collectStar(player, star) {
   star.kill();
+  var c = Phaser.Color.getRandomColor(50, 255, 255);
+  game.stage.backgroundColor = c;
 
   score += 10;
   scoreText.text = 'Score: ' + score;
